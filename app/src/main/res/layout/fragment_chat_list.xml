@@ -17,7 +17,7 @@
     </FrameLayout>
 
     <TextView
-        android:text="ㅎㅇㅎㅇㅎㅇㅎㅇ"
+        android:text="아 또 수정했다"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
