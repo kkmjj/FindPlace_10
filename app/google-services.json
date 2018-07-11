@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "845023929927",
+    "firebase_url": "https://findplace10.firebaseio.com",
+    "project_id": "findplace10",
+    "storage_bucket": "findplace10.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:845023929927:android:a6a95dc4eca0ac65",
+        "android_client_info": {
+          "package_name": "com.hanium.findplace.findplace_10"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "845023929927-jd78knlbqmgvn79mf8fe3dj5khucp2p6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hanium.findplace.findplace_10",
+            "certificate_hash": "ba5aaf8b9871e93baef97975f56c3db753c72e00"
+          }
+        },
+        {
+          "client_id": "845023929927-7nec3hhskab5qil66oniu89rp7rq8j8d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxtLLMCDkpZyyM59CC-jGAgjD11WcgS04"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "845023929927-7nec3hhskab5qil66oniu89rp7rq8j8d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
