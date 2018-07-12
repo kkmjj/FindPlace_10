@@ -44,10 +44,13 @@ public class ChatActivity extends AppCompatActivity {
     private ImageButton send;
     private EditText typeText;
 
-    private ChatModel chatModel;
     private String myUid;
     private String chatRoomUid;
+    private String destinationUid;
+    private ChatModel chatModel;
+    ChatModel.Comments tmpComments;
 
+    private MyChatRecyclerView myChatRecyclerView;
     private RecyclerView recyclerView;
     private FirebaseRemoteConfig firebaseRemoteConfig;
 
@@ -60,17 +63,15 @@ public class ChatActivity extends AppCompatActivity {
         String splash_background = firebaseRemoteConfig.getString(getString(R.string.rc_background));
         getWindow().setStatusBarColor(Color.parseColor(splash_background));
 
-
-
         typingBox = (RelativeLayout) findViewById(R.id.ChatActivity_RelativeLayout_TypingBox);
         typingBox.setBackgroundColor(Color.parseColor(splash_background));
         typeText = (EditText) findViewById(R.id.ChatActivity_EditText_typeText);
         send = (ImageButton) findViewById(R.id.ChatActivity_ImageButton_send);
 
         Intent intent = getIntent();
-
-        String destinationUid = intent.getStringExtra("uid");
+        destinationUid = intent.getStringExtra("uid");
         myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
 
         checkValidator(myUid, destinationUid);
 
@@ -78,12 +79,17 @@ public class ChatActivity extends AppCompatActivity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if(typeText.getText().toString().equals("")){
+                    return;
+                }
+
                 send.setEnabled(false);
-                ChatModel.Comments newMessage = new ChatModel.Comments(myUid, typeText.getText().toString(), new Date(System.currentTimeMillis()));
+                ChatModel.Comments newMessage = new ChatModel.Comments(myUid, typeText.getText().toString(), String.valueOf(new Date(System.currentTimeMillis())));
                 if(chatRoomUid == null){
                     Log.d("myLog-------------", "룸uid가 등록이 안되어잇음!!");
                 }else{
-                    FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(chatRoomUid).child("Comments").push().setValue(newMessage).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(chatRoomUid).child("users_comments").push().setValue(newMessage).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
 
@@ -102,13 +108,6 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    //참여자 유저정보 가져오기
-    public void setParticipants(){
-
-
-
-    }
-
     //채팅방 중복 방지
     public void checkValidator(final String myUid, final String destinationUid){
 
@@ -120,8 +119,8 @@ public class ChatActivity extends AppCompatActivity {
                 //내가 속한 대화방 DB가 아무것도 없을때 생성.
                 if(dataSnapshot.getValue() == null){
                     chatModel = new ChatModel();
-                    chatModel.getUsers_uid().put(destinationUid, true);
-                    chatModel.getUsers_uid().put(myUid, true);
+                    chatModel.users_uid.put(destinationUid, true);
+                    chatModel.users_uid.put(myUid, true);
                     FirebaseDatabase.getInstance().getReference().child("ChatRooms").push().setValue(chatModel).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -130,12 +129,14 @@ public class ChatActivity extends AppCompatActivity {
                     });
                     return;
                 }
+
                 boolean isjoongBok = true;
+
                 for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()){
                     ChatModel model = dataSnapshot1.getValue(ChatModel.class);
 
                     //만약 내가 속해있는 ChatRooms들 중에서 1:1대화를 원하는 상대가 속해있고 그 대화방이 2명인지 확인 -- 즉 기존의 1:1 대화방이 존재하는지 체크
-                    if(model.getUsers_uid().containsKey(destinationUid) && model.getUsers_uid().size() == 2){
+                    if(model.users_uid.containsKey(destinationUid) && model.users_uid.size() == 2){
                         //내가 속해있는 대화방이 이미 존재함.
                         chatRoomUid = dataSnapshot1.getKey();
                         chatModel = model;
@@ -145,14 +146,15 @@ public class ChatActivity extends AppCompatActivity {
                         recyclerView.setLayoutManager(new LinearLayoutManager(ChatActivity.this));
                         recyclerView.setAdapter(new MyChatRecyclerView());
 
-                        break;
+                        return;
                     }
                 }
 
+                //내와 1:1대화를 원하는 상대가 동시에 속해있는 방이 있기는 하나 그 외에도 단체방임.
                 if(isjoongBok){
                     chatModel = new ChatModel();
-                    chatModel.getUsers_uid().put(destinationUid, true);
-                    chatModel.getUsers_uid().put(myUid, true);
+                    chatModel.users_uid.put(destinationUid, true);
+                    chatModel.users_uid.put(myUid, true);
                     FirebaseDatabase.getInstance().getReference().child("ChatRooms").push().setValue(chatModel).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -175,13 +177,14 @@ public class ChatActivity extends AppCompatActivity {
     //채팅화면 띄우기
     class MyChatRecyclerView extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
-        List<ChatModel.Comments> chatComments;
+
+        List<ChatModel.Comments> chatComments_list;
         List<UserModel> chat_participants;
         Map<String, UserModel> searchMapforUID;
 
         //Constructor
         public MyChatRecyclerView(){
-            chatComments = new ArrayList<>();
+            chatComments_list = new ArrayList<>();
             chat_participants = new ArrayList<>();
             searchMapforUID = new HashMap<>();
 
@@ -206,33 +209,31 @@ public class ChatActivity extends AppCompatActivity {
                         });
                     }
 
-                    FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(chatRoomUid).child("Comments").addValueEventListener(new ValueEventListener() {
+                    FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(chatRoomUid).child("users_comments").addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
 
-                            chatComments.clear();
+                            chatComments_list.clear();
                             searchMapforUID.clear();
 
                             for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                                chatComments.add(snapshot.getValue(ChatModel.Comments.class));
+                                chatComments_list.add(snapshot.getValue(ChatModel.Comments.class));
                             }
 
-
-
-                            for(int i = 0; i < chatComments.size(); i++){
+                            for(int i = 0; i < chatComments_list.size(); i++){
 
                                 for(int j = 0; j < chat_participants.size(); j++){
 
-                                    if(chatComments.get(i).uid.equals(chat_participants.get(j).getUid())){
+                                    if(chatComments_list.get(i).uid.equals(chat_participants.get(j).getUid())){
 
-                                        searchMapforUID.put(chatComments.get(i).uid, chat_participants.get(j));
+                                        searchMapforUID.put(chatComments_list.get(i).uid, chat_participants.get(j));
 
                                     }
                                 }
                             }
 
                             notifyDataSetChanged();
-                            recyclerView.scrollToPosition(chatComments.size()-1);
+                            recyclerView.scrollToPosition(chatComments_list.size()-1);
 
                         }
 
@@ -249,8 +250,6 @@ public class ChatActivity extends AppCompatActivity {
 
                 }
             });
-
-
 
         }
 
@@ -271,29 +270,27 @@ public class ChatActivity extends AppCompatActivity {
 
                 MyChatRecyclerViewHolder thisHolder = ((MyChatRecyclerViewHolder)holder);
 
-                Date date = chatComments.get(position).sendTime;
-                SimpleDateFormat transFormat = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
-                String strDate = transFormat.format(date);
+                String date = chatComments_list.get(position).sendTime;
 
-                if(chatComments.get(position).uid.equals(myUid)){
+                if(chatComments_list.get(position).uid.equals(myUid)){
                     //내 말풍선 설정
                     thisHolder.linearLayout_main.setGravity(Gravity.RIGHT);
                     thisHolder.linearLayout_yourProfile.setVisibility(View.INVISIBLE);
                     thisHolder.linearLayout_textBox.setGravity(Gravity.RIGHT);
-                    thisHolder.chatDate.setText(strDate);
-                    thisHolder.chatMessage.setText(chatComments.get(position).comments);
+                    thisHolder.chatDate.setText(date);
+                    thisHolder.chatMessage.setText(chatComments_list.get(position).message);
                     thisHolder.chatMessage.setBackgroundResource(R.drawable.mychat);
                 }else{
                     //상대방 말풍선 설정
                     thisHolder.linearLayout_main.setGravity(Gravity.LEFT);
                     thisHolder.linearLayout_yourProfile.setVisibility(View.VISIBLE);
                     Glide.with(thisHolder.itemView.getContext())
-                            .load(searchMapforUID.get(chatComments.get(position).uid).getProfileURL())
+                            .load(searchMapforUID.get(chatComments_list.get(position).uid).getProfileURL())
                             .apply(new RequestOptions().circleCrop()).into(thisHolder.yourProfile);
-                    thisHolder.yourNickName.setText(searchMapforUID.get(chatComments.get(position).uid).getNickName());
+                    thisHolder.yourNickName.setText(searchMapforUID.get(chatComments_list.get(position).uid).getNickName());
                     thisHolder.linearLayout_textBox.setGravity(Gravity.LEFT);
-                    thisHolder.chatDate.setText(strDate);
-                    thisHolder.chatMessage.setText(chatComments.get(position).comments);
+                    thisHolder.chatDate.setText(date);
+                    thisHolder.chatMessage.setText(chatComments_list.get(position).message);
                     thisHolder.chatMessage.setBackgroundResource(R.drawable.yourchat);
                 }
 
@@ -303,7 +300,7 @@ public class ChatActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return chatComments.size();
+            return chatComments_list.size();
         }
 
         private class MyChatRecyclerViewHolder extends RecyclerView.ViewHolder {

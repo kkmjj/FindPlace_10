@@ -8,8 +8,10 @@
     tools:context=".fragment.MyAccountFragment">
 
     <TextView
+        android:id="@+id/MyAccount_TextView_nickName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="myAccount" />
+
 
 </LinearLayout>

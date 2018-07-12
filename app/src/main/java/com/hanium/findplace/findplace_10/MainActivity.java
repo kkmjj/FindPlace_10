@@ -3,31 +3,36 @@ package com.hanium.findplace.findplace_10;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.firebase.storage.FirebaseStorage;
 import com.hanium.findplace.findplace_10.fragment.ChatListFragment;
+import com.hanium.findplace.findplace_10.fragment.MyAccountFragment;
 import com.hanium.findplace.findplace_10.fragment.PeopleFragment;
-
-import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity {
 
-    private FrameLayout frameLayout;
-    private TextView mainMessage;
+    private ViewPager viewPager;
     private BottomNavigationView bottomNavigationView;
 
     private FirebaseUser currentUser;
     private String currentUid;
     private FirebaseRemoteConfig firebaseRemoteConfig;
+
+    PeopleFragment peopleFragment;
+    ChatListFragment chatListFragment;
+    MyAccountFragment myAccountFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +46,14 @@ public class MainActivity extends AppCompatActivity {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         currentUid = currentUser.getUid();
 
-        frameLayout = (FrameLayout) findViewById(R.id.MainActivity_FrameLayout);
+        peopleFragment = new PeopleFragment();
+        chatListFragment = new ChatListFragment();
+        myAccountFragment = new MyAccountFragment();
 
+        viewPager = (ViewPager) findViewById(R.id.MainActivity_ViewPager);
+        viewPager.setAdapter(new MyViewPagerAdapter(this.getSupportFragmentManager()));
+        viewPager.setOffscreenPageLimit(3);
 
-        //mainMessage = (TextView) findViewById(R.id.MainActivity_TextView_centerMessage);
 
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.MainActivity_BottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -52,22 +61,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.BottomNavigation_People:
-                        
-                        getFragmentManager().beginTransaction().replace(R.id.MainActivity_FrameLayout, new PeopleFragment()).commit();
 
+                        viewPager.setCurrentItem(0);
 
                         return true;
 
                     case R.id.BottomNavigation_Chat:
 
-                        getFragmentManager().beginTransaction().replace(R.id.MainActivity_FrameLayout, new ChatListFragment()).commit();
+                        viewPager.setCurrentItem(1);
 
 
                         return true;
                     case R.id.BottomNavigation_MyAccount:
 
+                        viewPager.setCurrentItem(2);
 
                         return true;
                 }
@@ -76,5 +85,62 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+                switch (position) {
+                    case 0:
+                        bottomNavigationView.setSelectedItemId(R.id.BottomNavigation_People);
+                        return;
+                    case 1:
+                        bottomNavigationView.setSelectedItemId(R.id.BottomNavigation_Chat);
+                        return;
+                    default:
+                        bottomNavigationView.setSelectedItemId(R.id.BottomNavigation_MyAccount);
+                        return;
+                }
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        viewPager.setCurrentItem(1);
+        bottomNavigationView.setSelectedItemId(R.id.BottomNavigation_Chat);
+
     }
+
+    private class MyViewPagerAdapter extends FragmentStatePagerAdapter {
+
+        public MyViewPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+
+            if (position == 0) {
+                return peopleFragment;
+            } else if (position == 1) {
+                return chatListFragment;
+            } else {
+                return myAccountFragment;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return 3;
+        }
+    }
+
 }

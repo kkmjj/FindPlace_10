@@ -7,24 +7,27 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/MainActivity_Search"
-        android:layout_width="match_parent"
-        android:text="여기는 검색을 할 것"
-        android:background="@color/colorAccent"
-        android:gravity="center"
-        android:layout_height="50dp" />
-
-    <FrameLayout
-        android:id="@+id/MainActivity_FrameLayout"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/MainActivity_ViewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/MainActivity_Search"
+        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_above="@+id/MainActivity_BottomNavigationView">
+        android:layout_above="@id/MainActivity_line">
 
-    </FrameLayout>
+    </android.support.v4.view.ViewPager>
+
+    <LinearLayout
+        android:id="@+id/MainActivity_line"
+        android:orientation="vertical"
+        android:background="@android:color/black"
+        android:layout_width="match_parent"
+        android:layout_above="@id/MainActivity_BottomNavigationView"
+        android:layout_height="1dp">
+
+    </LinearLayout>
+
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/MainActivity_BottomNavigationView"
@@ -33,7 +36,7 @@
         android:layout_height="wrap_content"
         app:itemTextColor="@drawable/bottom_selection"
         app:itemIconTint="@drawable/bottom_selection"
-        app:itemBackground="@color/colorAccent"
+        app:itemBackground="@android:color/white"
         app:menu="@menu/bottom_navigation">
 
     </android.support.design.widget.BottomNavigationView>

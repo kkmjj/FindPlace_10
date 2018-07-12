@@ -1,8 +1,11 @@
 package com.hanium.findplace.findplace_10;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -22,6 +25,9 @@ public class LoginActivity extends AppCompatActivity {
     private EditText password;
     private Button login;
     private Button signUp;
+
+    private final int LOCATION_ACCESS = 100;
+    private boolean permission_check = false;
 
     private FirebaseRemoteConfig firebaseRemoteConfig;
 
@@ -49,8 +55,15 @@ public class LoginActivity extends AppCompatActivity {
 
                         if(FirebaseAuth.getInstance().getCurrentUser() != null) {
                             //로그인 성공
-                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                            finish();
+                            permissionCheck();
+                            if(permission_check){
+                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                finish();
+                            }else{
+                                FirebaseAuth.getInstance().signOut();
+                                Toast.makeText(LoginActivity.this, "위치권한허가요망", Toast.LENGTH_SHORT).show();
+                            }
+
                         }else{
                             //로그인 실패
                             Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -70,6 +83,40 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+    }
+
+    private void permissionCheck(){
+
+        if(ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+
+                ActivityCompat.requestPermissions(LoginActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_ACCESS);
+        }else{
+            permission_check = true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch(requestCode){
+            case LOCATION_ACCESS:
+                // If request is cancelled, the result arrays are empty.
+                if(grantResults.length >0
+                        && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    permission_check = true;
+
+                }else{
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    permission_check = false;
+                }
+                return;
+            }
 
     }
 }

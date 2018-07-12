@@ -2,10 +2,10 @@ package com.hanium.findplace.findplace_10.fragment;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -24,6 +24,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.hanium.findplace.findplace_10.R;
 import com.hanium.findplace.findplace_10.ProfileActivity;
 import com.hanium.findplace.findplace_10.models.UserModel;
@@ -33,6 +34,8 @@ import java.util.List;
 
 public class PeopleFragment extends Fragment {
 
+    String splash_background;
+
     public PeopleFragment() {
 
     }
@@ -41,10 +44,13 @@ public class PeopleFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_people, container, false);
+
+        splash_background = FirebaseRemoteConfig.getInstance().getString(getString(R.string.rc_background));
+
+
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.PeopleFragment_RecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         recyclerView.setAdapter(new MyPeopleViewAdapter());
-        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
 
         return view;
     }
@@ -125,12 +131,15 @@ public class PeopleFragment extends Fragment {
 
             public ImageView profile;
             public TextView nickName;
+            public LinearLayout underLine;
 
             public MyPeopleViewHolder(View view) {
                 super(view);
 
                 profile = (ImageView) view.findViewById(R.id.ViewPeople_ImageView_profile);
                 nickName = (TextView) view.findViewById(R.id.ViewPeople_TextView_nickname);
+                underLine = (LinearLayout) view.findViewById(R.id.ViewPeople_LinearLayout_underLine);
+                underLine.setBackgroundColor(Color.parseColor(splash_background));
 
             }
         }

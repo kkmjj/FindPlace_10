@@ -1,15 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragment.PeopleFragment">
 
+    <TextView
+        android:id="@+id/PeopleFragment_TextView_Search"
+        android:layout_width="match_parent"
+        android:text="여기는 검색을 할 것"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:layout_height="50dp" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/PeopleFragment_line"
+        android:layout_below="@id/PeopleFragment_TextView_Search"
+        android:layout_width="match_parent"
+        android:background="@android:color/darker_gray"
+        android:layout_height="1sp">
+
+    </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/PeopleFragment_RecyclerView"
+        android:layout_below="@id/PeopleFragment_line"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
     </android.support.v7.widget.RecyclerView>
 
-</LinearLayout>
+</RelativeLayout>

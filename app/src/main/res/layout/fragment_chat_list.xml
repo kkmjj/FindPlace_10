@@ -4,30 +4,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:gravity="center"
+    android:orientation="vertical"
     tools:context=".fragment.ChatListFragment">
 
     <FrameLayout
-        android:layout_weight="1.5"
+        android:id="@+id/ChatListActivity_FrameLayout_mapView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="match_parent"
+        android:layout_weight="1.5">
 
     </FrameLayout>
 
     <TextView
-        android:text="아 또 수정했다"
+        android:id="@+id/ChatListActivity_TextView_address"
+        android:gravity="center"
+        android:text="현재위치 : "
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+         />
 
-    <FrameLayout
-        android:background="@color/colorAccent"
-        android:layout_weight="1"
+    <LinearLayout
+        android:layout_marginHorizontal="20dp"
+        android:background="@android:color/darker_gray"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="1dp">
 
+    </LinearLayout>
 
-    </FrameLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/ChatListActivity_RecyclerView_chatList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>
