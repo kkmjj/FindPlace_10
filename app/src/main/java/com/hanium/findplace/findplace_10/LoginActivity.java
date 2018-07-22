@@ -4,10 +4,10 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,7 +43,6 @@ public class LoginActivity extends AppCompatActivity {
         email = (EditText) findViewById(R.id.LoginActivity_EditText_email);
         password = (EditText) findViewById(R.id.LoginActivity_EditText_password);
         login = (Button) findViewById(R.id.LoginActivity_Button_login);
-        login.setBackgroundColor(Color.parseColor(splash_background));
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,7 +74,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         signUp = (Button) findViewById(R.id.LoginActivity_Button_signUp);
-        signUp.setBackgroundColor(Color.parseColor(splash_background));
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,6 +81,20 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        //자동로그인.
+        if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+            //로그인 성공
+            permissionCheck();
+            if(permission_check){
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                finish();
+            }else{
+                FirebaseAuth.getInstance().signOut();
+                Toast.makeText(LoginActivity.this, "위치권한허가요망", Toast.LENGTH_SHORT).show();
+            }
+
+        }
 
     }
 

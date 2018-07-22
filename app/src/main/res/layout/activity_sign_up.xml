@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
+    android:background="@drawable/main_background"
     tools:context=".SignUpActivity">
 
     <LinearLayout
@@ -13,6 +14,7 @@
         android:gravity="center"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
+        android:background="#33000000"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -20,6 +22,8 @@
             android:gravity="center_horizontal"
             android:textSize="40sp"
             android:text="JOIN US!"
+            android:textColor="#ffffff"
+            android:background="#3f000000"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -32,6 +36,7 @@
 
         <TextView
             android:text="select profile"
+            android:background="#13000000"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -43,6 +48,7 @@
                 android:id="@+id/SignUpActivity_EditText_email"
                 android:inputType="textEmailAddress"
                 android:hint="email (ex: abc12@naver.com)"
+                android:background="#13000000"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -56,6 +62,7 @@
                 android:id="@+id/SignUpActivity_EditText_password"
                 android:inputType="textPassword"
                 android:hint="password (6자리 이상)"
+                android:background="#13000000"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -69,6 +76,7 @@
                 android:id="@+id/SignUpActivity_EditText_nickName"
                 android:inputType="text"
                 android:hint="nickname"
+                android:background="#13000000"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -82,6 +90,7 @@
                 android:id="@+id/SignUpActivity_EditText_phoneNumber"
                 android:inputType="phone"
                 android:hint="phone (ex: - 빼고 11자리)"
+                android:background="#13000000"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -93,6 +102,9 @@
             android:layout_marginLeft="30dp"
             android:layout_marginTop="20dp"
             android:text="j o i n"
+            android:textColor="#ffffff"
+            android:textSize="20sp"
+            android:background="@layout/round_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -102,6 +114,9 @@
             android:layout_marginRight="30dp"
             android:layout_marginLeft="30dp"
             android:text="c a n c e l"
+            android:textColor="#ffffff"
+            android:textSize="20sp"
+            android:background="@layout/round_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/main_background"
     tools:context=".MainActivity">
 
     <android.support.v4.view.ViewPager
@@ -14,29 +15,20 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_above="@id/MainActivity_line">
+        android:layout_above="@id/MainActivity_BottomNavigationView">
 
     </android.support.v4.view.ViewPager>
 
-    <LinearLayout
-        android:id="@+id/MainActivity_line"
-        android:orientation="vertical"
-        android:background="@android:color/black"
-        android:layout_width="match_parent"
-        android:layout_above="@id/MainActivity_BottomNavigationView"
-        android:layout_height="1dp">
-
-    </LinearLayout>
-
-
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/MainActivity_BottomNavigationView"
+        android:layout_marginTop="3dp"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:elevation="2dp"
         app:itemTextColor="@drawable/bottom_selection"
         app:itemIconTint="@drawable/bottom_selection"
-        app:itemBackground="@android:color/white"
+        android:background="@layout/round_bottom_navi"
         app:menu="@menu/bottom_navigation">
 
     </android.support.design.widget.BottomNavigationView>

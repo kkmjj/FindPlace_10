@@ -2,7 +2,6 @@ package com.hanium.findplace.findplace_10.fragment;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -12,10 +11,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -25,8 +24,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.hanium.findplace.findplace_10.R;
+import com.hanium.findplace.findplace_10.MakeFriendsActivity;
 import com.hanium.findplace.findplace_10.ProfileActivity;
+import com.hanium.findplace.findplace_10.R;
 import com.hanium.findplace.findplace_10.models.UserModel;
 
 import java.util.ArrayList;
@@ -35,6 +35,7 @@ import java.util.List;
 public class PeopleFragment extends Fragment {
 
     String splash_background;
+    private Button plusFriends;
 
     public PeopleFragment() {
 
@@ -43,10 +44,18 @@ public class PeopleFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_people, container, false);
 
         splash_background = FirebaseRemoteConfig.getInstance().getString(getString(R.string.rc_background));
 
+        plusFriends = (Button) view.findViewById(R.id.PeopleFragment_Button_plusFriends);
+        plusFriends.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getContext(), MakeFriendsActivity.class));
+            }
+        });
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.PeopleFragment_RecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
@@ -103,7 +112,7 @@ public class PeopleFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
-
+            
             Glide.with(holder.itemView.getContext()).load(userList.get(position)
                     .getProfileURL()).apply(new RequestOptions().circleCrop())
                     .into(((MyPeopleViewHolder)holder).profile);
@@ -139,7 +148,7 @@ public class PeopleFragment extends Fragment {
                 profile = (ImageView) view.findViewById(R.id.ViewPeople_ImageView_profile);
                 nickName = (TextView) view.findViewById(R.id.ViewPeople_TextView_nickname);
                 underLine = (LinearLayout) view.findViewById(R.id.ViewPeople_LinearLayout_underLine);
-                underLine.setBackgroundColor(Color.parseColor(splash_background));
+//                underLine.setBackgroundColor(Color.parseColor(splash_background));
 
             }
         }

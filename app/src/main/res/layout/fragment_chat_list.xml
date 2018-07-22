@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
+    android:background="@android:color/transparent"
     tools:context=".fragment.ChatListFragment">
 
     <FrameLayout
         android:id="@+id/ChatListActivity_FrameLayout_mapView"
+        android:background="@layout/round_mapview"
+        android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1.5">
@@ -32,12 +36,36 @@
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/ChatListActivity_RecyclerView_chatList"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1">
 
-    </android.support.v7.widget.RecyclerView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/ChatListActivity_RecyclerView_chatList"
+            android:paddingTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+        </android.support.v7.widget.RecyclerView>
+
+        <com.melnykov.fab.FloatingActionButton
+            android:id="@+id/ChatListActivity_FloatingActionButton_createChatRoom"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="16dp"
+            android:src="@drawable/btnfloating_add"
+            app:fab_colorNormal="@android:color/transparent"
+            app:fab_shadow="false"
+            app:fab_colorPressed="@android:color/transparent"
+            app:fab_colorRipple="@android:color/transparent"
+            app:fab_type="normal"/>
+
+    </FrameLayout>
+
+
+
+
 
 </LinearLayout>

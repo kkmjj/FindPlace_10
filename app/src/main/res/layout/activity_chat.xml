@@ -4,16 +4,57 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/main_background"
     tools:context=".ChatActivity">
+
+    <LinearLayout
+        android:id="@+id/ChatActivity_ActionMenuView"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:background="#33000000"
+        android:orientation="horizontal"
+        android:layout_height="50dp">
+
+        <Button
+            android:id="@+id/ChatActivity_ActionMenuView_Button_goBack"
+            android:background="@drawable/go_back"
+            android:layout_margin="5dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp" />
+
+        <TextView
+            android:id="@+id/ChatActivity_ActionMenuView_TextView_chatRoomName"
+            android:text="챗방 이름"
+            android:layout_margin="5dp"
+            android:textSize="20sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:gravity="right|center_vertical"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/ChatActivity_ActionMenuView_Button_menu"
+                android:background="@drawable/menubutton"
+                android:layout_marginHorizontal="10dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/ChatActivity_RecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/ChatActivity_ActionMenuView"
         android:layout_above="@+id/ChatActivity_RelativeLayout_TypingBox"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true">
+       >
 
     </android.support.v7.widget.RecyclerView>
 
@@ -23,7 +64,7 @@
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@android:color/transparent">
+        android:background="#26000000">
 
         <ImageButton
             android:id="@+id/ChatActivity_ImageButton_send"

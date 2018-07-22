@@ -17,24 +17,33 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
-public class NaverPointToAddress extends AsyncTask<Double, Address, String>{
+public class NaverPointToAddress extends AsyncTask<Void, Address, String>{
 
     //member Variables
     private final String clientId = "uNwZ0jwOscgSGh264TFc";//애플리케이션 클라이언트 아이디값";;
     private final String clientSecret = "EfU0rUlk6z";//애플리케이션 클라이언트 시크릿값";
+    private String retAddress;
+    private double myLongitude;
+    private double myLatitude;
 
     //constructor
     public NaverPointToAddress(){
 
     }
 
+    public NaverPointToAddress(double longitude, double latitude){
+        this.myLongitude = longitude;
+        this.myLatitude = latitude;
+    }
+
+
+
 
     @Override
-    public String doInBackground(Double... doubles) {
-        String ret = getAddressInfo(doubles[0], doubles[1]).getAddress();
-        //주소 표시하기.
-        ChatListFragment.myProfile.setText("현재 위치 : "+ret);
-        return ret;
+    public String doInBackground(Void... doubles) {
+        //추후 수정해야함. 백그라운드 다른쓰레드에서 메인UI 조정할라하면 에러가 뜰수가 있다.
+        retAddress = getAddressInfo(myLongitude, myLatitude).getAddress();
+        return retAddress;
     }
 
     @Override
@@ -45,7 +54,7 @@ public class NaverPointToAddress extends AsyncTask<Double, Address, String>{
     @Override
     protected void onPostExecute(String s){
         super.onPostExecute(s);
-
+        ChatListFragment.myProfile.setText("현재위치 : "+s);
     }
 
 

@@ -2,9 +2,8 @@ package com.hanium.findplace.findplace_10;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.provider.ContactsContract;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -80,8 +79,8 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         frameLayout = (FrameLayout) findViewById(R.id.ProfileActivity_FrameLayout);
-        linearLayout = (LinearLayout) findViewById(R.id.ProfileActivity_LinearLayout);
-        linearLayout.setBackgroundColor(Color.parseColor(splash_background));
+//        linearLayout = (LinearLayout) findViewById(R.id.ProfileActivity_LinearLayout);
+//        linearLayout.setBackgroundColor(Color.parseColor(splash_background));
 
         profileBackground = (ImageView) findViewById(R.id.ProfileActivity_ImageView_ProfileBackground);
         close = (ImageView) findViewById(R.id.ProfileActivity_ImageView_Close);

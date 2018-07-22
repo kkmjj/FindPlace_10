@@ -1,5 +1,7 @@
 package com.hanium.findplace.findplace_10.models;
 
+import java.util.Map;
+
 public class UserModel {
 
     //member variables
@@ -10,6 +12,8 @@ public class UserModel {
     private String nickName;
     private String phoneNumber;
     private String address;
+    private String pushToken;
+    private Map<String, Object> friendUidList;
 
     //constructor
     public UserModel(){
@@ -32,6 +36,10 @@ public class UserModel {
     }
 
     //getter and setter
+    public String getPushToken(){ return pushToken;}
+
+    public void setPushToken(String pushToken){ this.pushToken = pushToken; }
+
     public String getUid() {
         return uid;
     }

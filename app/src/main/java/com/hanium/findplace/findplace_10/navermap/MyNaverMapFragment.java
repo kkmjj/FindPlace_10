@@ -139,7 +139,7 @@ public class MyNaverMapFragment extends NMapFragment implements NMapView.OnMapSt
                 //위치가 변화할때 이 메서드가 호출됨
                 //LoginStatus_Main.mapView.setText("현재위치좌표 : "+myLocation.toString());
                 if(LocationCounting >= 10){
-                    new NaverPointToAddress().execute(myLocation.getLongitude(), myLocation.getLatitude());
+                    new NaverPointToAddress(myLocation.getLongitude(), myLocation.getLatitude()).execute();
                     LocationCounting = 0;
                 }else{
                     LocationCounting++;

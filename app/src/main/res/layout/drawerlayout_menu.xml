@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_gravity="right"
+    android:background="#4cffffff"
+    android:layout_width="300dp"
+    android:orientation="vertical"
+
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:gravity="left"
+        android:background="#33000000"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/DrawerLayout_Button_turnBack"
+            android:background="@drawable/turnback"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="5dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:gravity="center"
+        android:background="#4c000000">
+
+        <TextView
+            android:gravity="center"
+            android:text="여기는 훗날 약속관리창으로 갈 곳.
+            이 모임방 약속과 관련한 정보를 보여줄 곳."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/DrawerLayout_LinearLayout_inviteNewMember"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:layout_marginTop="2dp"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:background="@drawable/createroom"
+            android:layout_marginVertical="5dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp" />
+
+        <TextView
+            android:text="모임 구성원 초대"
+            android:textSize="15sp"
+            android:fontFamily="@font/bm_dohyeon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/DrawerLayout_RecyclerView"
+        android:layout_marginTop="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v7.widget.RecyclerView>
+
+</LinearLayout>

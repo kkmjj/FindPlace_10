@@ -1,25 +1,27 @@
 package com.hanium.findplace.findplace_10;
 
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.FrameLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.hanium.findplace.findplace_10.fragment.ChatListFragment;
 import com.hanium.findplace.findplace_10.fragment.MyAccountFragment;
 import com.hanium.findplace.findplace_10.fragment.PeopleFragment;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -117,8 +119,11 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setCurrentItem(1);
         bottomNavigationView.setSelectedItemId(R.id.BottomNavigation_Chat);
 
+        makeTokenForPushMessage();
+
     }
 
+    //뷰페이저를 통한 화면전환.
     private class MyViewPagerAdapter extends FragmentStatePagerAdapter {
 
         public MyViewPagerAdapter(FragmentManager fm) {
@@ -141,6 +146,18 @@ public class MainActivity extends AppCompatActivity {
         public int getCount() {
             return 3;
         }
+    }
+
+    //로그인 토큰값 저장.
+    public void makeTokenForPushMessage(){
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String newToken = FirebaseInstanceId.getInstance().getToken();
+        Map<String, Object> map = new HashMap<>();
+        map.put("pushToken", newToken);
+
+        FirebaseDatabase.getInstance().getReference().child("Users").child(uid).updateChildren(map);
+
     }
 
 }
