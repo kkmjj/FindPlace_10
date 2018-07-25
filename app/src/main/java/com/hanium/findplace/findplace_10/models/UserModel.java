@@ -1,5 +1,6 @@
 package com.hanium.findplace.findplace_10.models;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class UserModel {
@@ -13,7 +14,8 @@ public class UserModel {
     private String phoneNumber;
     private String address;
     private String pushToken;
-    private Map<String, Object> friendUidList;
+
+    private Map<String, Boolean> friendUidList = new HashMap<>();
 
     //constructor
     public UserModel(){
@@ -36,6 +38,14 @@ public class UserModel {
     }
 
     //getter and setter
+    public Map<String, Boolean> getFriendUidList() {
+        return friendUidList;
+    }
+
+    public void setFriendUidList(Map<String, Boolean> friendUidList) {
+        this.friendUidList = friendUidList;
+    }
+
     public String getPushToken(){ return pushToken;}
 
     public void setPushToken(String pushToken){ this.pushToken = pushToken; }

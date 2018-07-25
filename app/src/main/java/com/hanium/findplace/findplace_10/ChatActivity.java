@@ -45,6 +45,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -88,7 +89,8 @@ public class ChatActivity extends AppCompatActivity {
     private UserModel myUserInfo;
     private String destinationToken;
     private Map<String, String> destinationTokens;
-    private List<UserModel> chat_participants;
+    //private List<UserModel> chat_participants;
+    private Map<String, UserModel> searchMapforUID;
 
     private RecyclerView recyclerView;
     private FirebaseRemoteConfig firebaseRemoteConfig;
@@ -556,7 +558,6 @@ public class ChatActivity extends AppCompatActivity {
     class MyChatRecyclerView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         List<ChatModel.Comments> chat_commentsList;
-        Map<String, UserModel> searchMapforUID;
         List<Integer> chat_readUserCount;
 
         //Constructor
@@ -565,20 +566,18 @@ public class ChatActivity extends AppCompatActivity {
             chat_commentsList = new ArrayList<>();
             searchMapforUID = new HashMap<>();
             chat_readUserCount = new ArrayList<>();
-            chat_participants = new ArrayList<>();
+            //chat_participants = new ArrayList<>();
 
             FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(chatRoomUid).child("users_uid").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    chat_participants.clear();
-
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        FirebaseDatabase.getInstance().getReference().child("Users").child(snapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        final String findUserForUid = snapshot.getKey();
+                        FirebaseDatabase.getInstance().getReference().child("Users").child(findUserForUid).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                chat_participants.add(dataSnapshot.getValue(UserModel.class));
+                                searchMapforUID.put(findUserForUid, dataSnapshot.getValue(UserModel.class));
                             }
 
                             @Override
@@ -610,6 +609,12 @@ public class ChatActivity extends AppCompatActivity {
                             if(chat_commentsList.size() == 0){
 
                             }else{
+
+                                //readUsers 읽은 사람 수 설정
+                                for (int i = 0; i < chat_commentsList.size(); i++) {
+                                    chat_readUserCount.add(i, searchMapforUID.size() - chat_commentsList.get(i).readUsers.size());
+                                }
+
                                 if (chat_commentsList.get(chat_commentsList.size() - 1).readUsers.containsKey(myUid)) {
                                     //서버에 이미 한번 갱신된 정보(맨 마지막이 읽었다고 표시가 됨)
                                     notifyDataSetChanged();
@@ -628,21 +633,6 @@ public class ChatActivity extends AppCompatActivity {
                             }
 
 
-
-                            for (int i = 0; i < chat_commentsList.size(); i++) {
-
-                                for (int j = 0; j < chat_participants.size(); j++) {
-
-                                    if (chat_commentsList.get(i).uid.equals(chat_participants.get(j).getUid())) {
-
-                                        searchMapforUID.put(chat_commentsList.get(i).uid, chat_participants.get(j));
-
-                                    }
-                                }
-
-                                chat_readUserCount.add(i, chat_participants.size() - chat_commentsList.get(i).readUsers.size());
-
-                            }
 
                         }
 
@@ -673,7 +663,7 @@ public class ChatActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-            if (chat_participants.size() == 0) {
+            if (searchMapforUID.size() == 0) {
                 Log.d("myTag---------------", "chat참여자의 정보가 제대로 저장되지 않았음.");
             } else {
 
@@ -708,10 +698,10 @@ public class ChatActivity extends AppCompatActivity {
                     //상대방 말풍선 설정
                     thisHolder.linearLayout_main.setGravity(Gravity.LEFT);
                     thisHolder.yourProfile.setVisibility(View.VISIBLE);
+                    thisHolder.yourNickName.setText(searchMapforUID.get(chat_commentsList.get(position).uid).getNickName());
                     Glide.with(thisHolder.itemView.getContext())
                             .load(searchMapforUID.get(chat_commentsList.get(position).uid).getProfileURL())
                             .apply(new RequestOptions().circleCrop()).into(thisHolder.yourProfile);
-                    thisHolder.yourNickName.setText(searchMapforUID.get(chat_commentsList.get(position).uid).getNickName());
                     thisHolder.linearLayout_textBox.setGravity(Gravity.LEFT);
                     thisHolder.chatDate.setText(strDate);
                     thisHolder.chatDateRight.setText("");
@@ -770,7 +760,18 @@ public class ChatActivity extends AppCompatActivity {
     //DrawerLayout Menu에서 현재 채팅멤버 보여주기
     class MyGroupMemberShow extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
+        List<UserModel> participants_list;
+
         public MyGroupMemberShow(){
+
+            participants_list = new ArrayList<>();
+            Iterator<String> iterator = searchMapforUID.keySet().iterator();
+            while(iterator.hasNext()){
+
+                String key = iterator.next();
+                participants_list.add(searchMapforUID.get(key));
+
+            }
 
         }
 
@@ -785,15 +786,15 @@ public class ChatActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-            if(chat_participants.size() == 0){
+            if(searchMapforUID.size() == 0){
                 Log.d(MYTAG, "chat_participants.size() 가 0이다...");
             }else{
 
                 MyGroupMemberViewHolder thisHolder = (MyGroupMemberViewHolder)holder;
-                thisHolder.nickName.setText(chat_participants.get(position).getNickName());
+                thisHolder.nickName.setText(participants_list.get(position).getNickName());
                 //thisHolder.nickName.setText("닉네임이다다ㅏ닫");
                 Glide.with(thisHolder.itemView.getContext())
-                        .load(chat_participants.get(position).getProfileURL())
+                        .load(participants_list.get(position).getProfileURL())
                         .apply(new RequestOptions().circleCrop()).into(thisHolder.profile);
 
             }
@@ -802,7 +803,7 @@ public class ChatActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return chat_participants.size();
+            return searchMapforUID.size();
         }
     }
 

@@ -3,9 +3,9 @@ package com.hanium.findplace.findplace_10;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -34,6 +34,7 @@ import com.hanium.findplace.findplace_10.models.UserModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -94,32 +95,41 @@ public class CreateRoomActivity extends AppCompatActivity {
 
     public class MyCreatePeopleViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
-        List<UserModel> userList;
+        List<UserModel> myFriendList;
         String currentUid;
 
         //constructor
         public MyCreatePeopleViewAdapter(){
-            userList = new ArrayList<>();
+            myFriendList = new ArrayList<>();
             selectList = new HashMap<>();
             currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
             Log.d("myLog----------------", "currentUid : "+currentUid);
 
-            FirebaseDatabase.getInstance().getReference().child("Users").addValueEventListener(new ValueEventListener() {
+            myFriendList = new ArrayList<>();
+            currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            Log.d("myLog----------------", "currentUid : "+currentUid);
+
+            FirebaseDatabase.getInstance().getReference().child("Users").child(currentUid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    userList.clear();
-                    UserModel tmpModel;
-                    for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                        tmpModel = snapshot.getValue(UserModel.class);
-                        if(tmpModel.getUid().equals(currentUid)){
-                            continue;
-                        }else{
-                            userList.add(tmpModel);
-                        }
+                    myFriendList.clear();
+                    UserModel tmpModel = dataSnapshot.getValue(UserModel.class);
+                    Iterator<String> iterator = tmpModel.getFriendUidList().keySet().iterator();
+                    while(iterator.hasNext()){
+                        String key = iterator.next();
+                        FirebaseDatabase.getInstance().getReference().child("Users").child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                myFriendList.add(dataSnapshot.getValue(UserModel.class));
+                                notifyDataSetChanged();
+                            }
 
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
                     }
-                    notifyDataSetChanged();
 
                 }
 
@@ -144,11 +154,11 @@ public class CreateRoomActivity extends AppCompatActivity {
 
             final MyCreatePeopleViewHolder thisHolder =  ((MyCreatePeopleViewHolder)holder);
 
-            Glide.with(holder.itemView.getContext()).load(userList.get(position)
+            Glide.with(holder.itemView.getContext()).load(myFriendList.get(position)
                     .getProfileURL()).apply(new RequestOptions().circleCrop())
                     .into(((MyCreatePeopleViewHolder)holder).profile);
 
-            ((MyCreatePeopleViewHolder)holder).nickName.setText(userList.get(position).getNickName());
+            ((MyCreatePeopleViewHolder)holder).nickName.setText(myFriendList.get(position).getNickName());
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -167,10 +177,10 @@ public class CreateRoomActivity extends AppCompatActivity {
 
                     if(isChecked){
                         //체크
-                        selectList.put(userList.get(position).getUid(), userList.get(position));
+                        selectList.put(myFriendList.get(position).getUid(), myFriendList.get(position));
                     }else{
                         //체크안됨
-                        selectList.remove(userList.get(position).getUid());
+                        selectList.remove(myFriendList.get(position).getUid());
                     }
 
                 }
@@ -180,7 +190,7 @@ public class CreateRoomActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return userList.size();
+            return myFriendList.size();
         }
 
         private class MyCreatePeopleViewHolder extends RecyclerView.ViewHolder {

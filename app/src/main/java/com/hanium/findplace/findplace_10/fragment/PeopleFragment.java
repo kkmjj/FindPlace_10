@@ -30,6 +30,7 @@ import com.hanium.findplace.findplace_10.R;
 import com.hanium.findplace.findplace_10.models.UserModel;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class PeopleFragment extends Fragment {
@@ -66,31 +67,36 @@ public class PeopleFragment extends Fragment {
 
     public class MyPeopleViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
-        List<UserModel> userList;
+        List<UserModel> myFriendList;
         String currentUid;
 
         //constructor
         public MyPeopleViewAdapter(){
-            userList = new ArrayList<>();
+            myFriendList = new ArrayList<>();
             currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
             Log.d("myLog----------------", "currentUid : "+currentUid);
 
-            FirebaseDatabase.getInstance().getReference().child("Users").addValueEventListener(new ValueEventListener() {
+            FirebaseDatabase.getInstance().getReference().child("Users").child(currentUid).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    userList.clear();
-                    UserModel tmpModel;
-                    for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                        tmpModel = snapshot.getValue(UserModel.class);
-                        if(tmpModel.getUid().equals(currentUid)){
-                            userList.add(0, tmpModel);
-                        }else{
-                            userList.add(tmpModel);
-                        }
+                    myFriendList.clear();
+                    UserModel tmpModel = dataSnapshot.getValue(UserModel.class);
+                    Iterator<String> iterator = tmpModel.getFriendUidList().keySet().iterator();
+                    while(iterator.hasNext()){
+                        String key = iterator.next();
+                        FirebaseDatabase.getInstance().getReference().child("Users").child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                myFriendList.add(dataSnapshot.getValue(UserModel.class));
+                                notifyDataSetChanged();
+                            }
 
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
                     }
-                    notifyDataSetChanged();
 
                 }
 
@@ -113,18 +119,18 @@ public class PeopleFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
             
-            Glide.with(holder.itemView.getContext()).load(userList.get(position)
+            Glide.with(holder.itemView.getContext()).load(myFriendList.get(position)
                     .getProfileURL()).apply(new RequestOptions().circleCrop())
                     .into(((MyPeopleViewHolder)holder).profile);
 
-            ((MyPeopleViewHolder)holder).nickName.setText(userList.get(position).getNickName());
+            ((MyPeopleViewHolder)holder).nickName.setText(myFriendList.get(position).getNickName());
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(getContext(), R.anim.fromcentertoleft, R.anim.fromrighttocenter);
                     Intent intent = new Intent(getContext(), ProfileActivity.class);
-                    intent.putExtra("uid", userList.get(position).getUid());
+                    intent.putExtra("uid", myFriendList.get(position).getUid());
                     startActivity(intent, activityOptions.toBundle());
                 }
             });
@@ -133,7 +139,7 @@ public class PeopleFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return userList.size();
+            return myFriendList.size();
         }
 
         private class MyPeopleViewHolder extends RecyclerView.ViewHolder {

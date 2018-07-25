@@ -15,7 +15,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hanium.findplace.findplace_10.LoginActivity;
-import com.hanium.findplace.findplace_10.MainActivity;
 import com.hanium.findplace.findplace_10.R;
 import com.hanium.findplace.findplace_10.models.UserModel;
 
@@ -42,6 +41,7 @@ public class MyAccountFragment extends Fragment {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                FirebaseDatabase.getInstance().getReference().child("Users").child(myUid).child("pushToken").removeValue();
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(getContext(), LoginActivity.class));
                 getActivity().finish();

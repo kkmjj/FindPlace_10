@@ -82,20 +82,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        //자동로그인.
-        if(FirebaseAuth.getInstance().getCurrentUser() != null) {
-            //로그인 성공
-            permissionCheck();
-            if(permission_check){
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                finish();
-            }else{
-                FirebaseAuth.getInstance().signOut();
-                Toast.makeText(LoginActivity.this, "위치권한허가요망", Toast.LENGTH_SHORT).show();
-            }
-
-        }
-
     }
 
     private void permissionCheck(){
