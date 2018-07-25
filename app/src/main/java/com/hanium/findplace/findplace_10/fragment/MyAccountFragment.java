@@ -7,8 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,7 +24,7 @@ import com.hanium.findplace.findplace_10.models.UserModel;
 public class MyAccountFragment extends Fragment {
 
     private TextView myNickName;
-
+    private ImageView profile;
     private String myUid;
 
     private UserModel myAccount;
@@ -47,6 +50,7 @@ public class MyAccountFragment extends Fragment {
                 getActivity().finish();
             }
         });
+        profile = (ImageView) view.findViewById(R.id.MyAccountFragment_profile);
 
         myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -57,6 +61,12 @@ public class MyAccountFragment extends Fragment {
                 myAccount = dataSnapshot.getValue(UserModel.class);
                 myNickName.setText(myAccount.getNickName());
 
+                Glide
+                        .with(getContext())
+                        .load(myAccount.getProfileURL())
+                        .apply(new RequestOptions().circleCrop())
+                        .into(profile);
+
             }
 
             @Override
@@ -64,6 +74,8 @@ public class MyAccountFragment extends Fragment {
 
             }
         });
+
+
 
         return view;
     }
