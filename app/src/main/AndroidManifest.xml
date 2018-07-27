@@ -45,13 +45,13 @@
 
         <activity
             android:name=".CreateRoomActivity"
-            android:theme="@style/MyAppCompatDialog">
-        </activity>
+            android:theme="@style/MyAppCompatDialog"></activity>
         <activity
             android:name=".MakeFriendsActivity"
-            android:theme="@style/MyAppCompatDialog">
-        </activity>
-
+            android:theme="@style/MyAppCompatDialog"></activity>
+        <activity
+            android:name=".MakeAppointmentActivity"
+            android:theme="@style/MyAppCompatDialog"></activity>
     </application>
 
 </manifest>

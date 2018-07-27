@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="300dp"
+    android:layout_height="400dp"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".MakeAppointmentActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="New Appointment"
+        android:fontFamily="@font/d2coding_ver_1_3"
+        android:layout_marginBottom="10dp"
+        android:textSize="20sp"/>
+
+    <Spinner
+        android:id="@+id/MakeFriends_BetterSpinner"
+        android:layout_width="150dp"
+        android:backgroundTint="#7ed7c4"
+        android:layout_height="wrap_content"
+        android:spinnerMode="dropdown"
+        android:fontFamily="@font/d2coding_ver_1_3">
+
+    </Spinner>
+
+</LinearLayout>

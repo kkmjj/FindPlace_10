@@ -98,7 +98,7 @@
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_gravity="right"
-        android:background="#7f000000"
+        android:background="#ffffff"
         android:layout_width="300dp"
         android:orientation="vertical"
 
@@ -106,7 +106,7 @@
 
         <LinearLayout
             android:gravity="left"
-            android:background="#33000000"
+            android:background="#acacac"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -122,15 +122,41 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="350dp"
             android:gravity="center"
-            android:background="#4c000000">
+            android:orientation="vertical"
+            android:background="@drawable/main_background">
+
+            <LinearLayout
+                android:id="@+id/DrawerLayout_LinearLayout_makeAppointment"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:background="#e1e1e1"
+                android:gravity="center_vertical"
+                android:layout_marginTop="2dp"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:background="@drawable/createroom"
+                    android:layout_marginVertical="2dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp" />
+
+                <TextView
+                    android:text="새 약속 만들기"
+                    android:textSize="15sp"
+                    android:textColor="#000000"
+                    android:fontFamily="@font/bm_dohyeon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
 
             <TextView
                 android:gravity="center"
-                android:text="여기는 훗날 약속관리창으로 갈 곳.
-            이 모임방 약속과 관련한 정보를 보여줄 곳."
-                android:textColor="@android:color/white"
+                android:text="RecyclerView로 이 방의 약속들을 보여준다"
+                android:textColor="#000000"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -140,13 +166,14 @@
             android:id="@+id/DrawerLayout_LinearLayout_inviteNewMember"
             android:orientation="horizontal"
             android:layout_width="match_parent"
+            android:background="#e2e2e2"
             android:gravity="center_vertical"
             android:layout_marginTop="2dp"
             android:layout_height="wrap_content">
 
             <Button
                 android:background="@drawable/createroom"
-                android:layout_marginVertical="5dp"
+                android:layout_marginVertical="2dp"
                 android:layout_marginHorizontal="10dp"
                 android:layout_width="40dp"
                 android:layout_height="40dp" />
@@ -154,7 +181,7 @@
             <TextView
                 android:text="모임 구성원 초대"
                 android:textSize="15sp"
-                android:textColor="#ffffff"
+                android:textColor="#000000"
                 android:fontFamily="@font/bm_dohyeon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

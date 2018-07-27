@@ -102,6 +102,7 @@ public class ChatActivity extends AppCompatActivity {
     private Button drawerLayout_turnBack;
     private LinearLayout drawerLayout_inviteNewMember;
     private RecyclerView drawerLayout_recyclerview_memberList;
+    private LinearLayout drawerLayout_makeAppointment;
 
     //-----------------------------------------------------DRAWERLAYOUT MEMBERVARIABLES
     @Override
@@ -254,6 +255,17 @@ public class ChatActivity extends AppCompatActivity {
                 if(drawerLayout.isDrawerOpen(Gravity.RIGHT)){
                     drawerLayout.closeDrawer(Gravity.RIGHT);
                 }
+            }
+        });
+        drawerLayout_makeAppointment = (LinearLayout) findViewById(R.id.DrawerLayout_LinearLayout_makeAppointment);
+        drawerLayout_makeAppointment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //새로운 약속만들기 화면 생성.
+
+
+
+
             }
         });
         drawerLayout_inviteNewMember = (LinearLayout) findViewById(R.id.DrawerLayout_LinearLayout_inviteNewMember);
@@ -567,72 +579,85 @@ public class ChatActivity extends AppCompatActivity {
             searchMapforUID = new HashMap<>();
             chat_readUserCount = new ArrayList<>();
             //chat_participants = new ArrayList<>();
+            final List<String> uidList = new ArrayList<>();
 
             FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(chatRoomUid).child("users_uid").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
+
+                    uidList.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        final String findUserForUid = snapshot.getKey();
-                        FirebaseDatabase.getInstance().getReference().child("Users").child(findUserForUid).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                searchMapforUID.put(findUserForUid, dataSnapshot.getValue(UserModel.class));
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
+                        uidList.add(snapshot.getKey());
+                        Log.d(MYTAG, "아 이거 혹시 findUserForUid값이 final 이라서 저장이 안되나? : "+snapshot.getKey());
                     }
-
-                    databaseReference = FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(chatRoomUid).child("users_comments");
-                    valueEventListener = databaseReference.addValueEventListener(new ValueEventListener() {
+                    Log.d(MYTAG, "uidList.size() = "+uidList.size());
+                    FirebaseDatabase.getInstance().getReference().child("Users").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
 
-                            chat_commentsList.clear();
-                            //searchMapforUID.clear();
-
-                            Map<String, Object> readUserMap = new HashMap<>();
-                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                String key = snapshot.getKey();
-                                ChatModel.Comments originComment = snapshot.getValue(ChatModel.Comments.class);
-                                ChatModel.Comments modifyComment = snapshot.getValue(ChatModel.Comments.class);
-                                modifyComment.readUsers.put(myUid, true);
-
-                                readUserMap.put(key, modifyComment);
-                                chat_commentsList.add(originComment);
+                            for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                                for(int i = 0; i < uidList.size(); i++){
+                                    if(snapshot.getValue(UserModel.class).getUid().equals(uidList.get(i))){
+                                        searchMapforUID.put(snapshot.getValue(UserModel.class).getUid(), snapshot.getValue(UserModel.class));
+                                        Log.d(MYTAG, "searchMapforUID 에 저장함 : "+snapshot.getValue(UserModel.class).getUid());
+                                    }
+                                }
                             }
 
-                            if(chat_commentsList.size() == 0){
+                            databaseReference = FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(chatRoomUid).child("users_comments");
+                            valueEventListener = databaseReference.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                            }else{
+                                    chat_commentsList.clear();
+                                    //searchMapforUID.clear();
 
-                                //readUsers 읽은 사람 수 설정
-                                for (int i = 0; i < chat_commentsList.size(); i++) {
-                                    chat_readUserCount.add(i, searchMapforUID.size() - chat_commentsList.get(i).readUsers.size());
-                                }
+                                    Map<String, Object> readUserMap = new HashMap<>();
+                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                        String key = snapshot.getKey();
+                                        ChatModel.Comments originComment = snapshot.getValue(ChatModel.Comments.class);
+                                        ChatModel.Comments modifyComment = snapshot.getValue(ChatModel.Comments.class);
+                                        modifyComment.readUsers.put(myUid, true);
 
-                                if (chat_commentsList.get(chat_commentsList.size() - 1).readUsers.containsKey(myUid)) {
-                                    //서버에 이미 한번 갱신된 정보(맨 마지막이 읽었다고 표시가 됨)
-                                    notifyDataSetChanged();
-                                    recyclerView.scrollToPosition(chat_commentsList.size() - 1);
-                                } else {
-                                    //마지막을 아직 읽지 않음
-                                    FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(chatRoomUid).child("users_comments")
-                                            .updateChildren(readUserMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
+                                        readUserMap.put(key, modifyComment);
+                                        chat_commentsList.add(originComment);
+                                    }
+
+                                    if(chat_commentsList.size() == 0){
+
+                                    }else{
+
+                                        //readUsers 읽은 사람 수 설정
+                                        for (int i = 0; i < chat_commentsList.size(); i++) {
+                                            chat_readUserCount.add(i, searchMapforUID.size() - chat_commentsList.get(i).readUsers.size());
+                                        }
+
+                                        if (chat_commentsList.get(chat_commentsList.size() - 1).readUsers.containsKey(myUid)) {
+                                            //서버에 이미 한번 갱신된 정보(맨 마지막이 읽었다고 표시가 됨)
                                             notifyDataSetChanged();
                                             recyclerView.scrollToPosition(chat_commentsList.size() - 1);
+                                        } else {
+                                            //마지막을 아직 읽지 않음
+                                            FirebaseDatabase.getInstance().getReference().child("ChatRooms").child(chatRoomUid).child("users_comments")
+                                                    .updateChildren(readUserMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    notifyDataSetChanged();
+                                                    recyclerView.scrollToPosition(chat_commentsList.size() - 1);
+                                                }
+                                            });
                                         }
-                                    });
+                                    }
+
                                 }
-                            }
 
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
 
+                                }
+
+                            });
 
                         }
 
@@ -641,6 +666,8 @@ public class ChatActivity extends AppCompatActivity {
 
                         }
                     });
+
+
 
                 }
 
@@ -698,6 +725,16 @@ public class ChatActivity extends AppCompatActivity {
                     //상대방 말풍선 설정
                     thisHolder.linearLayout_main.setGravity(Gravity.LEFT);
                     thisHolder.yourProfile.setVisibility(View.VISIBLE);
+
+                    Iterator<String> iterator = searchMapforUID.keySet().iterator();
+                    while(iterator.hasNext()){
+                        String key = iterator.next();
+                        Log.d(MYTAG, "searchMapForUID has the KeyUID : "+key);
+                    }
+
+                    Log.d(MYTAG, "nullPointer searchMapForUID / "+ (searchMapforUID.isEmpty() ? "true":"false"));
+                    Log.d(MYTAG, chat_commentsList.get(position).uid);
+
                     thisHolder.yourNickName.setText(searchMapforUID.get(chat_commentsList.get(position).uid).getNickName());
                     Glide.with(thisHolder.itemView.getContext())
                             .load(searchMapforUID.get(chat_commentsList.get(position).uid).getProfileURL())
@@ -817,6 +854,7 @@ public class ChatActivity extends AppCompatActivity {
 
             profile = (ImageView) view.findViewById(R.id.ViewPeople_ImageView_profile);
             nickName = (TextView) view.findViewById(R.id.ViewPeople_TextView_nickname);
+            nickName.setTextColor(Color.parseColor("#000000"));
 
         }
     }

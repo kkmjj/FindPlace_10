@@ -14,9 +14,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 public class LoginActivity extends AppCompatActivity {
@@ -35,6 +37,17 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        if(FirebaseAuth.getInstance().getCurrentUser() != null){
+            FirebaseDatabase.getInstance().getReference().child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("pushToken").removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    FirebaseAuth.getInstance().signOut();
+                }
+            });
+        }
+
+
 
         firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
         String splash_background = firebaseRemoteConfig.getString(getString(R.string.rc_background)).toString();

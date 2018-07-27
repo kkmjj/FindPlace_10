@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
         String splash_background = firebaseRemoteConfig.getString(getString(R.string.rc_background));
         getWindow().setStatusBarColor(Color.parseColor(splash_background));
