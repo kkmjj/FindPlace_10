@@ -167,7 +167,7 @@ public class SignUpActivity extends AppCompatActivity {
         if(requestCode == PICK_FROM_ALBUM && resultCode == RESULT_OK){
 
             profileUri = data.getData();
-            profile.setImageURI(profileUri);
+            profile.setImageURI(profileUri); // 사진 프로필 에 저장
 
         }
 

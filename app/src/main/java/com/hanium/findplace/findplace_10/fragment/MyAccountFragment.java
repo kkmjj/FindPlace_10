@@ -110,8 +110,14 @@ public class MyAccountFragment extends Fragment {
                                 intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
                                 startActivityForResult(intent, PICK_FROM_ALBUM);
 
+
+
+
                             }
                         });
+
+
+
 
 
 /*
@@ -200,6 +206,8 @@ public class MyAccountFragment extends Fragment {
                                                     @Override
                                                     public void onComplete(@NonNull Task<Void> task) {
                                                         if (task.isSuccessful()) {
+
+
                                                             // 데이터베이스에서 업데이트
                                                             Map<String, Object> tmpMap = new HashMap<>();
                                                             tmpMap.put("password", value);
@@ -265,6 +273,30 @@ public class MyAccountFragment extends Fragment {
 
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if(requestCode == PICK_FROM_ALBUM && resultCode == RESULT_OK){
+
+            profileUri = data.getData();
+            //profile.setImageURI(profileUri);        // 프로필 화면에서만 변경
+            FirebaseStorage.getInstance().getReference().child("profileImages").putFile(profileUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    profileURL = task.getResult().getDownloadUrl().toString();
+
+                   // data 베이스 변경
+                    Map<String, Object> tmpMap = new HashMap<>();
+                    tmpMap.put("profileURL", profileURL);
+                    FirebaseDatabase.getInstance().getReference().
+                            child("Users").child(currentUser.getUid()).updateChildren(tmpMap);
+                    Log.d(TAG, "User image updated.");
+                }
+            });
+        }
+
     }
 
 }
